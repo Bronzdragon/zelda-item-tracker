@@ -1,0 +1,17 @@
+.inset {
+    margin-left: 2em;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  margin-left: 1em;
+}
+
+.line::after {
+  margin: 0px 1em;
+  content: "";
+  flex: 1 1 auto;
+  border: 5px solid #ffffff;
+  border-radius: 5px;
+}
