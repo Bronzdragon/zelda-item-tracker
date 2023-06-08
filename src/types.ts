@@ -1,3 +1,5 @@
+import { ItemInterface } from "react-sortablejs";
+
 export type ArmourItem = {
   name: string;
   requirements: Requirement[];
@@ -17,12 +19,23 @@ export function isArmourItem(item: unknown): item is ArmourItem {
 
 export interface Requirement {
   name: string;
-  amount: number;
+  amountRequired: number;
 }
 
-export function isRequirement(
-  requirement: unknown
-): requirement is Requirement {
+export interface Material extends ItemInterface {
+  // From sortable
+  id: string | number;
+  selected?: boolean;
+  chosen?: boolean;
+  filtered?: boolean;
+
+  // Used by us
+  name: string;
+  tags: string[];
+  amountOwned: number;
+}
+
+export function isRequirement(requirement: unknown): requirement is Requirement {
   return (
     typeof requirement === "object" &&
     requirement !== null &&

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArmourItem, Requirement } from "../types";
 import styles from "./ItemEdit.module.css";
 
@@ -12,9 +12,12 @@ interface props {
 
 function ItemEdit({ onSubmit, details, editType = "new" }: props) {
   const [name, setName] = useState(details?.name ?? "");
-  const [requirements, setRequirements] = useState<Requirement[]>(
-    () => details?.requirements ?? getDefaultRequirements()
-  );
+  const [requirements, setRequirements] = useState<Requirement[]>(() => details?.requirements ?? []);
+
+  useEffect(() => {
+    if (requirements.length >= 4) return;
+    setRequirements([...requirements, ...getDefaultRequirements()].slice(0, 4));
+  }, [requirements, setRequirements]);
 
   return (
     <form
@@ -22,14 +25,15 @@ function ItemEdit({ onSubmit, details, editType = "new" }: props) {
         event.preventDefault();
         if (name === "") return;
 
-        onSubmit?.({ name, requirements });
+        onSubmit?.({ name, requirements: requirements.filter((req) => req.name && req.amountRequired) });
         setName("");
         setRequirements(getDefaultRequirements());
       }}
     >
       <label htmlFor="name" className={styles.label}>
-        Name
+        Armour name
       </label>
+      <br />
       <input
         type="text"
         name="name"
@@ -37,21 +41,20 @@ function ItemEdit({ onSubmit, details, editType = "new" }: props) {
         onChange={(event) => setName(event.target.value)}
         placeholder="Armour piece..."
       ></input>
-
-      <div className={styles.label}>Requirements:</div>
       <table>
         <thead>
-          <th></th>
-          <th>name</th>
-          <th>count</th>
-          <th></th>
+          <tr>
+            <th>name</th>
+            <th>count</th>
+          </tr>
         </thead>
         <tbody>
           {requirements.map((requirement, index) => (
             <RequirementInput
+              key={index}
               value={requirement}
               onChange={(newValue) => {
-                if (!newValue.name) newValue.amount = 0;
+                if (!newValue.name) newValue.amountRequired = 0;
                 setRequirements((oldRequirements) => [
                   ...oldRequirements.slice(0, index),
                   newValue,
@@ -77,10 +80,7 @@ interface RequirementInputProps {
   onChange: (newValue: Requirement) => void;
 }
 
-function RequirementInput({
-  value: { name, amount },
-  onChange,
-}: RequirementInputProps) {
+function RequirementInput({ value: { name, amountRequired: amount }, onChange }: RequirementInputProps) {
   // console.log("Creating requirements field... current value: ", name, amount);
 
   return (
@@ -91,8 +91,8 @@ function RequirementInput({
           name={`item`}
           value={name}
           placeholder="Material..."
-          onChange={(event) => onChange({ name: event.target.value, amount })}
-        ></input>
+          onChange={(event) => onChange({ name: event.target.value, amountRequired: amount })}
+        />
       </td>
       <td>
         <input
@@ -102,18 +102,14 @@ function RequirementInput({
           name={`amount`}
           className={styles["number-input"]}
           value={amount}
-          onChange={(event) =>
-            onChange({ name, amount: Number(event.target.value) })
-          }
-        ></input>
+          onChange={(event) => onChange({ name, amountRequired: Number(event.target.value) })}
+        />
       </td>
     </tr>
   );
 }
 
-// function assertIsHTMLFormElement(
-//   e: EventTarget | null
-// ): asserts e is HTMLFormElement {
+// function assertIsHTMLFormElement(e: EventTarget | null): asserts e is HTMLFormElement {
 //   if (!(e instanceof HTMLFormElement)) {
 //     throw new TypeError("Not a form element!");
 //   }
@@ -124,6 +120,6 @@ function RequirementInput({
 //   return Array.from({ length }, (_, i) => arrays.map((arr) => arr[i]));
 // }
 
-function getDefaultRequirements(count = 4, { name = "", amount = 0 } = {}) {
-  return Array.from({ length: count }, () => ({ name, amount }));
+function getDefaultRequirements(count = 4, { name = "", amountRequired = 0 } = {}): Requirement[] {
+  return Array.from({ length: count }, () => ({ name, amountRequired }));
 }

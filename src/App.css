@@ -1,9 +1,13 @@
 .App {
   background-color: #282c34;
   color: white;
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
+  padding: 1em 0;
 }
 
-.App, input, button {
+.App,
+input,
+button {
   font-size: calc(10px + 1.5vmin);
 }

@@ -1,15 +1,14 @@
 .cell {
-    padding: 0.1em 0.5em;
+  padding: 0.1em 0.5em;
 }
 
 .editButton {
-    background-color: transparent;
-    border: none;
-    font-size: 2em;
-    box-sizing: border-box;
-    
+  background-color: transparent;
+  border: none;
+  font-size: 2em;
+  box-sizing: border-box;
 }
 
 .editButton:hover {
-    border: lightcoral solid 1px;
+  border: lightcoral solid 1px;
 }

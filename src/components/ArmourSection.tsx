@@ -4,32 +4,26 @@ import ItemEdit from "./ItemEdit";
 import Item from "./Item";
 
 interface ArmourSectionProps {
-  armourList: ArmourItem[];
+  armours: ArmourItem[];
   onUpdateItemList: (list: ArmourItem[]) => void;
 }
 
-function ArmourSection({ armourList, onUpdateItemList }: ArmourSectionProps) {
+function ArmourSection({ armours: armourList, onUpdateItemList }: ArmourSectionProps) {
   return (
     <>
       {armourList.map((item, index) => (
         <EditableItem
+          key={item.name}
           item={item}
           onItemUpdate={(newItem) => {
             onUpdateItemList(
-              [
-                ...armourList.slice(0, index),
-                newItem,
-                ...armourList.slice(index + 1),
-              ].filter(isArmourItem) // To filter out possible 'null' values.
+              [...armourList.slice(0, index), newItem, ...armourList.slice(index + 1)].filter(isArmourItem) // To filter out possible 'null' values.
             );
           }}
         />
       ))}
       <hr />
-      <ItemEdit
-        editType="new"
-        onSubmit={(item) => onUpdateItemList([...armourList, item])}
-      />
+      <ItemEdit editType="new" onSubmit={(item) => onUpdateItemList([...armourList, item])} />
       <hr />
     </>
   );
@@ -55,13 +49,7 @@ function EditableItem({ item, onItemUpdate }: EditableItemProps) {
     );
   }
 
-  return (
-    <Item
-      item={item}
-      onEdit={() => setEditing(true)}
-      onDelete={() => onItemUpdate(null)}
-    />
-  );
+  return <Item item={item} onEdit={() => setEditing(true)} onDelete={() => onItemUpdate(null)} />;
 }
 
 export default ArmourSection;

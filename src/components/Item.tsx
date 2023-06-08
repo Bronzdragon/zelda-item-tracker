@@ -14,16 +14,22 @@ function Item({ item, onDelete, onEdit, onComplete }: props) {
       <h1>{item.name}</h1>
       <table>
         <tbody>
-        {item.requirements
-        .filter(r => r.name !== '')
-        .map((r) => (
-          <RequirementRow requirement={r} />
-        ))}
+          {item.requirements
+            .filter((r) => r.name !== "")
+            .map((r) => (
+              <RequirementRow key={r.name} requirement={r} />
+            ))}
         </tbody>
       </table>
-      <button className={styles.editButton} aria-label="Delete" onClick={onDelete}>❌</button>
-      <button className={styles.editButton} aria-label="Edit" onClick={() => onEdit?.(item)}>📝</button>
-      <button className={styles.editButton} aria-label="Complete" onClick={() => onComplete?.(item)}>✅</button>
+      <button className={styles.editButton} aria-label="Delete" onClick={onDelete}>
+        ❌
+      </button>
+      <button className={styles.editButton} aria-label="Edit" onClick={() => onEdit?.(item)}>
+        📝
+      </button>
+      <button className={styles.editButton} aria-label="Complete" onClick={() => onComplete?.(item)}>
+        ✅
+      </button>
     </div>
   );
 }
@@ -35,7 +41,7 @@ function RequirementRow({ requirement }: rowProps) {
   return (
     <tr>
       <td className={styles.cell}>{requirement.name}</td>
-      <td className={styles.cell}>{requirement.amount}</td>
+      <td className={styles.cell}>{requirement.amountRequired}</td>
     </tr>
   );
 }
