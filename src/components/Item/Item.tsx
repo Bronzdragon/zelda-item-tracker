@@ -1,5 +1,8 @@
-import { ArmourItem, Requirement } from "../types";
+import { ArmourItem, Requirement } from "../../types";
 import styles from "./Item.module.css";
+import deleteButton from "./delete.svg";
+import editButton from "./edit.svg";
+import doneButton from "./done.svg";
 
 interface props {
   item: ArmourItem;
@@ -11,7 +14,20 @@ interface props {
 function Item({ item, onDelete, onEdit, onComplete }: props) {
   return (
     <div>
-      <h1>{item.name}</h1>
+      <h1>
+      <section className={styles.buttonBox}><button className={styles.editButton} aria-label="Delete" onClick={onDelete}>
+        <img src={deleteButton} alt="delete item." />
+      </button>
+      <button className={styles.editButton} aria-label="Edit" onClick={() => onEdit?.(item)}>
+        <img src={editButton} alt="edit item."/>
+      </button>
+      <button className={styles.editButton} aria-label="Complete" onClick={() => onComplete?.(item)}>
+        <img src={doneButton} alt="mark as done."/>
+      </button>
+      
+      </section>
+      {item.name}
+      </h1>
       <table>
         <tbody>
           {item.requirements
@@ -21,15 +37,7 @@ function Item({ item, onDelete, onEdit, onComplete }: props) {
             ))}
         </tbody>
       </table>
-      <button className={styles.editButton} aria-label="Delete" onClick={onDelete}>
-        ❌
-      </button>
-      <button className={styles.editButton} aria-label="Edit" onClick={() => onEdit?.(item)}>
-        📝
-      </button>
-      <button className={styles.editButton} aria-label="Complete" onClick={() => onComplete?.(item)}>
-        ✅
-      </button>
+      
     </div>
   );
 }

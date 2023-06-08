@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArmourItem, isArmourItem } from "../types";
-import ItemEdit from "./ItemEdit";
-import Item from "./Item";
+import ItemEdit from "./Item/ItemEdit";
+import Item from "./Item/Item";
 
 interface ArmourSectionProps {
   armours: ArmourItem[];

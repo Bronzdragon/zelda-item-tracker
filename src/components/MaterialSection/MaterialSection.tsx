@@ -1,9 +1,12 @@
 import styles from "./MaterialSection.module.css";
-import NumberInput from "./NumberInput";
+import NumberInput from "../NumberInput";
 // import { DraggableContainer } from "./Draggable";
 import { ItemInterface, ReactSortable } from "react-sortablejs";
-import { ArmourItem, Material } from "../types";
+import { ArmourItem, Material } from "../../types";
 import { useEffect, useState } from "react";
+import dotGrid from "./dot-grid.svg";
+import sortAscendingImage from "./sort-ascending.svg";
+import sortDescendingImage from "./sort-descending.svg";
 
 interface MaterialSortElement extends ItemInterface {
   id: string;
@@ -86,9 +89,9 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
       <thead>
         <tr>
           <th></th>
-          <MaterialHeader name="name" sortInfo={{state: sortState, onSortChanged}} />
-          <MaterialHeader name="have" sortInfo={{state: sortState, onSortChanged}}  />
-          <MaterialHeader name="need" sortInfo={{state: sortState, onSortChanged}}  />
+          <MaterialHeader name="name" sortInfo={{ state: sortState, onSortChanged }} />
+          <MaterialHeader name="have" sortInfo={{ state: sortState, onSortChanged }} />
+          <MaterialHeader name="need" sortInfo={{ state: sortState, onSortChanged }} />
           <MaterialHeader name="tags" />
         </tr>
       </thead>
@@ -124,26 +127,28 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
 
 type MaterialHeaderProps = {
   name: SortState["sortedBy"];
-  sortInfo?: {state: SortState, onSortChanged?: (newState: SortState) => void };
-}
+  sortInfo?: { state: SortState; onSortChanged?: (newState: SortState) => void };
+};
 
 function MaterialHeader({ name, sortInfo: sort }: MaterialHeaderProps) {
   return (
     <th
       className={styles.tableHeader}
       onClick={() => {
-        if(!sort?.state) return;
+        if (!sort?.state) return;
         const direction = sort.state.sortedBy === name && sort.state.direction === "asc" ? "dec" : "asc";
         sort?.onSortChanged?.({ sortedBy: name, direction });
       }}
     >
       {name}
-      {sort ? <img
-        src={`/view-sort-${
-          sort.state.sortedBy === name && sort.state.direction === "asc" ? "descending": "ascending"
-        }-symbolic.svg`}
-        alt="sort by name"
-      /> : null}
+      {sort ? (
+        <img
+          src={
+            sort.state.sortedBy === name && sort.state.direction === "asc" ? sortAscendingImage : sortDescendingImage
+          }
+          alt="sort by name"
+        />
+      ) : null}
     </th>
   );
 }
@@ -162,7 +167,7 @@ function MaterialRow({ material, numPossessed, numRequired, onChange, dragHandle
   return (
     <tr className={stillRequired <= 0 ? styles.done : ""}>
       <td className={dragHandleClass}>
-        <img src="/dot-grid.svg" alt="handle" />
+        <img src={dotGrid} alt="handle" />
       </td>
       <td>{material.name}</td>
       {/*name*/}

@@ -5,10 +5,22 @@
 .editButton {
   background-color: transparent;
   border: none;
-  font-size: 2em;
+  margin: 0 0.2em;
   box-sizing: border-box;
+}
+
+.editButton img {
+  width: 1.5em;
+  
+}
+
+.buttonBox {
+  padding-right: 0.7em;
+  vertical-align: middle;
+  display: inline-block;
 }
 
 .editButton:hover {
   border: lightcoral solid 1px;
 }
+

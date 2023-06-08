@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArmourItem, Requirement } from "../types";
+import { ArmourItem, Requirement } from "../../types";
 import styles from "./ItemEdit.module.css";
 
 type TypeOfEdit = "new" | "edit";

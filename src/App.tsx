@@ -3,7 +3,7 @@ import { ArmourItem, Material } from "./types";
 import { useEffect, useState } from "react";
 import ArmourSection from "./components/ArmourSection";
 import Collapsible from "./components/Collapsible";
-import MaterialSection from "./components/MaterialSection";
+import MaterialSection from "./components/MaterialSection/MaterialSection";
 
 function App() {
   const [armourList, setArmourList] = useState<ArmourItem[]>(defaultArmourList);
