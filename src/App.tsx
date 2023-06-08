@@ -35,7 +35,11 @@ function App() {
         <ArmourSection armours={armourList} onUpdateItemList={setArmourList} />
       </Collapsible>
       <Collapsible>
-        <MaterialSection armours={armourList} materials={materialList} setMaterials={setMaterialList} />
+        <MaterialSection armours={armourList} materials={materialList} onMaterialUpdate={(name, amountOwned) => {
+          setMaterialList(
+            materialList.map((material) => (material.name === name ? { ...material, amountOwned } : material))
+          )
+        }}/>
       </Collapsible>
     </div>
   );

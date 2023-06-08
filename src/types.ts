@@ -22,14 +22,7 @@ export interface Requirement {
   amountRequired: number;
 }
 
-export interface Material extends ItemInterface {
-  // From sortable
-  id: string | number;
-  selected?: boolean;
-  chosen?: boolean;
-  filtered?: boolean;
-
-  // Used by us
+export interface Material {
   name: string;
   tags: string[];
   amountOwned: number;

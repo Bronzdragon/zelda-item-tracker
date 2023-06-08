@@ -23,6 +23,10 @@
   background-color: rgb(57, 73, 56);
 }
 
+.tableHeader {
+  text-transform: capitalize;
+}
+
 .almost {
 }
 
