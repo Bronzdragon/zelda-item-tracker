@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/node": "^16.18.34",
-    "@types/react": "^18.2.8",
-    "@types/react-dom": "^18.2.4",
     "cs": "github:Bronzdragon/cs",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -45,6 +42,9 @@
     ]
   },
   "devDependencies": {
+    "@types/node": "^16.18.34",
+    "@types/react": "^18.2.8",
+    "@types/react-dom": "^18.2.4",
     "@types/sortablejs": "^1.15.1"
   }
 }
