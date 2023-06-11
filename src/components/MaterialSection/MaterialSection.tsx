@@ -1,12 +1,12 @@
 import styles from "./MaterialSection.module.css";
 import NumberInput from "../NumberInput";
-// import { DraggableContainer } from "./Draggable";
 import { ItemInterface, ReactSortable } from "react-sortablejs";
 import { ArmourItem, Material } from "../../types";
 import { useEffect, useState } from "react";
 import dotGrid from "./dot-grid.svg";
 import sortAscendingImage from "./sort-ascending.svg";
 import sortDescendingImage from "./sort-descending.svg";
+import cs from "cs";
 
 interface MaterialSortElement extends ItemInterface {
   id: string;
@@ -105,23 +105,22 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
           if (event.oldIndex !== event.newIndex) setSortState({ direction: "other", sortedBy: "custom" });
         }}
       >
-        {materialSort
-          .filter((material) => material.id in requiredByMaterial)
-          .map((mat) => {
-            const material = materials.find((material) => material.name === mat.id);
-            if (!material) return null;
+        {materialSort.map((mat) => {
+          const material = materials.find((material) => material.name === mat.id);
+          if (!material) return null;
 
-            return (
-              <MaterialRow
-                dragHandleClass={styles.dragHandle}
-                key={material.name}
-                material={material}
-                numPossessed={material.amountOwned}
-                numRequired={requiredByMaterial[material.name]}
-                onChange={(amount) => onMaterialUpdate(material.name, amount)}
-              />
-            );
-          })}
+          return (
+            <MaterialRow
+              key={material.name}
+              dragHandleClass={styles.dragHandle}
+              material={material}
+              numPossessed={material.amountOwned}
+              numRequired={requiredByMaterial[material.name]}
+              visible={material.name in requiredByMaterial}
+              onChange={(amount) => onMaterialUpdate(material.name, amount)}
+            />
+          );
+        })}
       </ReactSortable>
     </table>
   );
@@ -161,13 +160,21 @@ interface MaterialRowProps {
   numRequired: number;
   onChange?: (num: number) => void;
   dragHandleClass?: string;
+  visible?: boolean;
 }
 
-function MaterialRow({ material, numPossessed, numRequired, onChange, dragHandleClass }: MaterialRowProps) {
+function MaterialRow({
+  material,
+  numPossessed,
+  numRequired,
+  onChange,
+  dragHandleClass,
+  visible = true,
+}: MaterialRowProps) {
   const stillRequired = Math.max(numRequired - numPossessed, 0);
 
   return (
-    <tr className={stillRequired <= 0 ? styles.done : ""}>
+    <tr className={cs(stillRequired <= 0 && styles.done, !visible && styles.hide)}>
       <td className={dragHandleClass}>
         <img src={dotGrid} alt="handle" />
       </td>

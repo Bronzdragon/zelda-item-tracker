@@ -43,3 +43,7 @@
   width: 1.3em;
   vertical-align: middle;
 }
+
+.hide {
+  display: none;
+}
