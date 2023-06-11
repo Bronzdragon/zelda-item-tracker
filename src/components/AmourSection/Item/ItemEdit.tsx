@@ -81,8 +81,6 @@ interface RequirementInputProps {
 }
 
 function RequirementInput({ value: { name, amountRequired: amount }, onChange }: RequirementInputProps) {
-  // console.log("Creating requirements field... current value: ", name, amount);
-
   return (
     <tr>
       <td>
@@ -108,17 +106,6 @@ function RequirementInput({ value: { name, amountRequired: amount }, onChange }:
     </tr>
   );
 }
-
-// function assertIsHTMLFormElement(e: EventTarget | null): asserts e is HTMLFormElement {
-//   if (!(e instanceof HTMLFormElement)) {
-//     throw new TypeError("Not a form element!");
-//   }
-// }
-
-// function zip<T>(...arrays: T[][]): T[][] {
-//   const length = Math.max(...arrays.map((arr) => arr.length));
-//   return Array.from({ length }, (_, i) => arrays.map((arr) => arr[i]));
-// }
 
 function getDefaultRequirements(count = 4, { name = "", amountRequired = 0 } = {}): Requirement[] {
   return Array.from({ length: count }, () => ({ name, amountRequired }));

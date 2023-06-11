@@ -13,15 +13,11 @@ function App() {
 
   // Add any missing materials to the array.
   useEffect(() => {
-    // console.log("Checking for duplicates....");
     const allMaterials = armourList.flatMap((armour) => armour.requirements.map((requirement) => requirement.name));
     const existingMaterials = materialList.map((mat) => mat.name.toLocaleLowerCase());
     const missingMaterials = new Set(
       allMaterials.filter((material) => !existingMaterials.includes(material.toLocaleLowerCase()))
     );
-    // console.log("All materials so far: ", allMaterials);
-    // console.log("Already Existing materials: ", existingMaterials);
-    // console.log("Missing materials: ", missingMaterials);
 
     if (missingMaterials.size > 0) {
       setMaterialList([
@@ -86,7 +82,7 @@ function App() {
                 materialList.map((material) => {
                   const requirement = requirements.find((requirements) => requirements.name === material.name);
                   if (!requirement) return material;
-                  return { ...material, amountOwned: material.amountOwned - requirement.needed };
+                  return { ...material, amountOwned: Math.max(material.amountOwned - requirement.needed, 0) };
                 })
               );
             }

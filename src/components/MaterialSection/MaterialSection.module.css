@@ -31,8 +31,6 @@
   margin: auto 0.1em auto 0.3em;
   height: 0.9em;
 }
-.almost {
-}
 
 .number-cell {
   padding: 0 0.1em;
@@ -42,8 +40,4 @@
 .dragHandle img {
   width: 1.3em;
   vertical-align: middle;
-}
-
-.hide {
-  display: none;
 }

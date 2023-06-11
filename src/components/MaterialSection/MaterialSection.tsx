@@ -173,8 +173,10 @@ function MaterialRow({
 }: MaterialRowProps) {
   const stillRequired = Math.max(numRequired - numPossessed, 0);
 
+  if (!visible) return null;
+
   return (
-    <tr className={cs(stillRequired <= 0 && styles.done, !visible && styles.hide)}>
+    <tr className={cs(stillRequired <= 0 && styles.done)}>
       <td className={dragHandleClass}>
         <img src={dotGrid} alt="handle" />
       </td>
