@@ -1,0 +1,15 @@
+.header {
+  font-size: 2em;
+  margin-bottom: 1em;
+  display: block;
+}
+
+.table {
+  margin: auto;
+}
+
+.message {
+  margin-top: 1.5em;
+  margin-bottom: 1em;
+  display: block;
+}

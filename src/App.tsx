@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import ArmourSection from "./components/ArmourSection";
 import Collapsible from "./components/Collapsible";
 import MaterialSection from "./components/MaterialSection/MaterialSection";
+import swalWithReact from "./swalShim";
+import { ConfirmMessage, UnmetRequirements } from "./components/SwalMessages";
 
 function App() {
   const [armourList, setArmourList] = useState<ArmourItem[]>(defaultArmourList);
@@ -32,15 +34,78 @@ function App() {
   return (
     <div className="App">
       <Collapsible>
-        <ArmourSection armours={armourList} onUpdateItemList={setArmourList} />
+        <ArmourSection
+          armours={armourList}
+          onUpdateItem={async (type, item, oldItem) => {
+            if (type === "delete") {
+              const result: true | null = await swalWithReact(<>Discard {item.name}?</>, {
+                buttons: [true, "Yes"],
+                icon: "error",
+                dangerMode: true,
+              });
+              if (result) {
+                setArmourList(armourList.filter((armour) => armour.name !== item.name));
+              }
+            }
+            if (type === "edit")
+              setArmourList(armourList.map((armour) => (armour.name === oldItem?.name ? item : armour)));
+            if (type === "new") setArmourList([...armourList, item]);
+            if (type === "complete") {
+              const requirements = item.requirements.map((requirement) => ({
+                name: requirement.name,
+                needed: requirement.amountRequired,
+                owned: materialList.find((material) => material.name === requirement.name)?.amountOwned ?? 0,
+              }));
+
+              const haveRequirements = requirements.every((requirement) => requirement.owned >= requirement.needed);
+              if (!haveRequirements) {
+                if (
+                  !(await swalWithReact(
+                    <UnmetRequirements
+                      requirements={requirements.filter((requirement) => requirement.needed > requirement.owned)}
+                    />,
+                    {
+                      buttons: [true, "Yes"],
+                      icon: "error",
+                      dangerMode: true,
+                    }
+                  ))
+                )
+                  return;
+              }
+              if (
+                !(await swalWithReact(<ConfirmMessage requirements={requirements} />, {
+                  buttons: [true, true],
+                  icon: "success",
+                }))
+              )
+                return;
+
+              setArmourList(armourList.filter((armour) => armour.name === item.name));
+              setMaterialList(
+                materialList.map((material) => {
+                  const requirement = requirements.find((requirements) => requirements.name === material.name);
+                  if (!requirement) return material;
+                  return { ...material, amountOwned: material.amountOwned - requirement.needed };
+                })
+              );
+            }
+          }}
+        ></ArmourSection>
       </Collapsible>
-      <Collapsible>
-        <MaterialSection armours={armourList} materials={materialList} onMaterialUpdate={(name, amountOwned) => {
-          setMaterialList(
-            materialList.map((material) => (material.name === name ? { ...material, amountOwned } : material))
-          )
-        }}/>
-      </Collapsible>
+      {armourList.length > 0 ? (
+        <Collapsible>
+          <MaterialSection
+            armours={armourList}
+            materials={materialList}
+            onMaterialUpdate={(name, amountOwned) => {
+              setMaterialList(
+                materialList.map((material) => (material.name === name ? { ...material, amountOwned } : material))
+              );
+            }}
+          ></MaterialSection>
+        </Collapsible>
+      ) : null}
     </div>
   );
 }

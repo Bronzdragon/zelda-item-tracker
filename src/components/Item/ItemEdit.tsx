@@ -25,7 +25,7 @@ function ItemEdit({ onSubmit, details, editType = "new" }: props) {
         event.preventDefault();
         if (name === "") return;
 
-        onSubmit?.({ name, requirements: requirements.filter((req) => req.name && req.amountRequired) });
+        onSubmit?.({ name, requirements: requirements.filter((req) => req.name !== "" && req.amountRequired > 0) });
         setName("");
         setRequirements(getDefaultRequirements());
       }}

@@ -1,5 +1,3 @@
-import { ItemInterface } from "react-sortablejs";
-
 export type ArmourItem = {
   name: string;
   requirements: Requirement[];

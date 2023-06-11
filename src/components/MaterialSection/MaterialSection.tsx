@@ -105,21 +105,23 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
           if (event.oldIndex !== event.newIndex) setSortState({ direction: "other", sortedBy: "custom" });
         }}
       >
-        {materialSort.map((mat) => {
-          const material = materials.find((material) => material.name === mat.id);
-          if (!material) return null;
+        {materialSort
+          .filter((material) => material.id in requiredByMaterial)
+          .map((mat) => {
+            const material = materials.find((material) => material.name === mat.id);
+            if (!material) return null;
 
-          return (
-            <MaterialRow
-              dragHandleClass={styles.dragHandle}
-              key={material.name}
-              material={material}
-              numPossessed={material.amountOwned}
-              numRequired={requiredByMaterial[material.name]}
-              onChange={(amount) => onMaterialUpdate(material.name, amount)}
-            />
-          );
-        })}
+            return (
+              <MaterialRow
+                dragHandleClass={styles.dragHandle}
+                key={material.name}
+                material={material}
+                numPossessed={material.amountOwned}
+                numRequired={requiredByMaterial[material.name]}
+                onChange={(amount) => onMaterialUpdate(material.name, amount)}
+              />
+            );
+          })}
       </ReactSortable>
     </table>
   );

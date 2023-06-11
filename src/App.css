@@ -8,6 +8,7 @@
 
 .App,
 input,
-button {
+button,
+.swal-modal {
   font-size: calc(10px + 1.5vmin);
 }

@@ -1,29 +1,27 @@
 import { useState } from "react";
-import { ArmourItem, isArmourItem } from "../types";
+import { ArmourItem } from "../types";
 import ItemEdit from "./Item/ItemEdit";
 import Item from "./Item/Item";
 
 interface ArmourSectionProps {
   armours: ArmourItem[];
-  onUpdateItemList: (list: ArmourItem[]) => void;
+  onUpdateItem: (updateType: "new" | "edit" | "complete" | "delete", item: ArmourItem, oldItem?: ArmourItem) => void;
 }
 
-function ArmourSection({ armours: armourList, onUpdateItemList }: ArmourSectionProps) {
+function ArmourSection({ armours: armourList, onUpdateItem }: ArmourSectionProps) {
   return (
     <>
       {armourList.map((item, index) => (
         <EditableItem
           key={item.name}
           item={item}
-          onItemUpdate={(newItem) => {
-            onUpdateItemList(
-              [...armourList.slice(0, index), newItem, ...armourList.slice(index + 1)].filter(isArmourItem) // To filter out possible 'null' values.
-            );
+          onItemUpdate={(type, newItem) => {
+            onUpdateItem(type, newItem, item);
           }}
         />
       ))}
       <hr />
-      <ItemEdit editType="new" onSubmit={(item) => onUpdateItemList([...armourList, item])} />
+      <ItemEdit editType="new" onSubmit={(item) => onUpdateItem("new", item)} />
       <hr />
     </>
   );
@@ -31,7 +29,7 @@ function ArmourSection({ armours: armourList, onUpdateItemList }: ArmourSectionP
 
 interface EditableItemProps {
   item: ArmourItem;
-  onItemUpdate: (item: ArmourItem | null) => void;
+  onItemUpdate: (updateType: "edit" | "complete" | "delete", item: ArmourItem) => void;
 }
 
 function EditableItem({ item, onItemUpdate }: EditableItemProps) {
@@ -42,14 +40,21 @@ function EditableItem({ item, onItemUpdate }: EditableItemProps) {
         editType="edit"
         onSubmit={(newItem) => {
           setEditing(false);
-          onItemUpdate(newItem);
+          onItemUpdate("edit", newItem);
         }}
         details={item}
       />
     );
   }
 
-  return <Item item={item} onEdit={() => setEditing(true)} onDelete={() => onItemUpdate(null)} />;
+  return (
+    <Item
+      item={item}
+      onEdit={() => setEditing(true)}
+      onDelete={() => onItemUpdate("delete", item)}
+      onComplete={() => onItemUpdate("complete", item)}
+    />
+  );
 }
 
 export default ArmourSection;
