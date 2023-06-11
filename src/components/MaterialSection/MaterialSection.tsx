@@ -1,5 +1,5 @@
 import styles from "./MaterialSection.module.css";
-import NumberInput from "../NumberInput";
+import NumberInput from "./NumberInput";
 import { ItemInterface, ReactSortable } from "react-sortablejs";
 import { ArmourItem, Material } from "../../types";
 import { useEffect, useState } from "react";

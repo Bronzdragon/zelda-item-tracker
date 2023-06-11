@@ -1,4 +1,4 @@
-import { ArmourItem, Requirement } from "../../types";
+import { ArmourItem, Requirement } from "../../../types";
 import styles from "./Item.module.css";
 import deleteButton from "./delete.svg";
 import editButton from "./edit.svg";

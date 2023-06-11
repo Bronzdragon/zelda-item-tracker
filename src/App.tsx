@@ -1,11 +1,11 @@
 import "./App.css";
 import { ArmourItem, Material } from "./types";
 import { useEffect, useState } from "react";
-import ArmourSection from "./components/ArmourSection";
+import ArmourSection from "./components/AmourSection/ArmourSection";
 import Collapsible from "./components/Collapsible";
 import MaterialSection from "./components/MaterialSection/MaterialSection";
 import swalWithReact from "./swalShim";
-import { ConfirmMessage, UnmetRequirements } from "./components/SwalMessages";
+import { ConfirmMessage, UnmetRequirements } from "./components/AmourSection/SwalMessages";
 
 function App() {
   const [armourList, setArmourList] = useState<ArmourItem[]>(defaultArmourList);

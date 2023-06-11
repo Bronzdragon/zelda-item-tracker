@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArmourItem } from "../types";
+import { ArmourItem } from "../../types";
 import ItemEdit from "./Item/ItemEdit";
 import Item from "./Item/Item";
 
