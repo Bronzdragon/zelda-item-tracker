@@ -4,6 +4,7 @@ import { Material } from "../../types";
 import dotGrid from "./dot-grid.svg";
 import cs from "cs";
 import TagInput from "./TagInput";
+import { useState } from "react";
 
 export type DisplayState = "lowlight" | "regular" | "highlight";
 
@@ -33,11 +34,13 @@ function MaterialRow({
   onTagToggled,
 }: MaterialRowProps) {
   const stillRequired = Math.max(numRequired - numPossessed, 0);
+  const [editing, setEditing] = useState(false);
 
-  // if (!visible) return null;
+  const displayStateClass = editing ? styles.regular : styles[displayState]
+
 
   return (
-    <tr className={cs(stillRequired <= 0 && styles.done, styles.row, styles[displayState], !visible && styles.hide )}>
+    <tr className={cs(stillRequired <= 0 && styles.done, styles.row, displayStateClass, !visible && styles.hide )}>
       <td className={dragHandleClass}>
         <img src={dotGrid} alt="handle" />
       </td>
@@ -51,6 +54,8 @@ function MaterialRow({
       {/* need */}
       <td>
         <TagInput
+          onToggleEdit={() => setEditing(prev => !prev)}
+          editing={editing}
           onUpdateTags={onTagsUpdated}
           tags={material.tags.map((name) => ({ name, active: activeTags.includes(name) }))}
           onTagClicked={(tag) => {

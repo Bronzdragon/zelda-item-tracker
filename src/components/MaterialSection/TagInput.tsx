@@ -1,4 +1,3 @@
-import { useState } from "react";
 import cs from "cs";
 import styles from "./TagInput.module.css";
 import editSrc from "./edit.svg";
@@ -11,13 +10,13 @@ interface tagInfo {
 
 interface TagInputProps {
   tags: tagInfo[];
+  editing?: boolean;
   onTagClicked?: (tagName: string) => void;
   onUpdateTags?: (newTags: string[]) => void;
+  onToggleEdit?: () => void;
 }
 
-function TagInput({ tags, onTagClicked, onUpdateTags }: TagInputProps) {
-  const [editing, setEditing] = useState(false);
-
+function TagInput({ tags, editing = false, onTagClicked, onUpdateTags, onToggleEdit }: TagInputProps) {
   const lowlightOthers = tags.some((tag) => tag.active);
   const innerElement = editing ? (
     <input name="tags" defaultValue={tags.map((tag) => tag.name).join(", ")} />
@@ -33,7 +32,7 @@ function TagInput({ tags, onTagClicked, onUpdateTags }: TagInputProps) {
     <form
       onSubmit={(event) => {
         event.preventDefault();
-        setEditing((prev) => !prev);
+        onToggleEdit?.();
 
         const tagString = new FormData(event.currentTarget).get("tags");
         if (tagString === null) return;
