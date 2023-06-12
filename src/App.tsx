@@ -1,15 +1,18 @@
 import "./App.css";
 import { ArmourItem, Material } from "./types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import usePersistentState from "./usePersistentState";
+
 import ArmourSection from "./components/AmourSection/ArmourSection";
 import Collapsible from "./components/Collapsible";
 import MaterialSection from "./components/MaterialSection/MaterialSection";
+
 import swalWithReact from "./swalShim";
 import { ConfirmMessage, UnmetRequirements } from "./components/AmourSection/SwalMessages";
 
 function App() {
-  const [armourList, setArmourList] = useState<ArmourItem[]>(defaultArmourList);
-  const [materialList, setMaterialList] = useState<Material[]>([]);
+  const [armourList, setArmourList] = usePersistentState<ArmourItem[]>("armourList", []);
+  const [materialList, setMaterialList] = usePersistentState<Material[]>("materialList", []);
 
   // Add any missing materials to the array.
   useEffect(() => {
@@ -25,9 +28,7 @@ function App() {
         ...[...missingMaterials].map((material) => ({ id: material, name: material, amountOwned: 0, tags: [] })),
       ]);
     }
-  }, [armourList, materialList]);
-
-  console.log(materialList)
+  }, [armourList, materialList, setMaterialList]);
 
   return (
     <div className="App">
@@ -36,12 +37,11 @@ function App() {
           <MaterialSection
             armours={armourList}
             materials={materialList}
-            onMaterialUpdate={(name, amountOwned, tags) => {
-              console.log(`Updating material: ${name}. New tags: ${JSON.stringify(tags)}`)
+            onMaterialUpdate={(name, amountOwned, tags) =>
               setMaterialList(
-                materialList.map((material) => material.name === name ? { name, amountOwned, tags } : material)
-              );
-            }}
+                materialList.map((material) => (material.name === name ? { name, amountOwned, tags } : material))
+              )
+            }
           ></MaterialSection>
         </Collapsible>
       ) : null}
@@ -105,28 +105,8 @@ function App() {
           }}
         ></ArmourSection>
       </Collapsible>
-      
     </div>
   );
 }
 
 export default App;
-
-const defaultArmourList = [
-  {
-    name: "Hylian legs lvl 3",
-    requirements: [
-      { name: "Green Lizalfos Tail", amountRequired: 15 },
-      { name: "Hinox Horn", amountRequired: 5 },
-      { name: "Star Fragment", amountRequired: 2 },
-    ],
-  },
-  {
-    name: "Hylian legs lvl 4",
-    requirements: [
-      { name: "Blue Lizalfos Tail", amountRequired: 15 },
-      { name: "Stalnox Guts", amountRequired: 5 },
-      { name: "Star Fragment", amountRequired: 2 },
-    ],
-  },
-];

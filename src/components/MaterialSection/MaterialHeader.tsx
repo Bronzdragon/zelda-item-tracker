@@ -6,6 +6,7 @@ type MaterialHeaderProps = {
   name: SortState["sortedBy"];
   sortInfo?: { state: SortState; onSortChanged?: (newState: SortState) => void };
 };
+
 function MaterialHeader({ name, sortInfo: sort }: MaterialHeaderProps) {
   return (
     <th

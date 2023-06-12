@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { ArmourItem } from "../../types";
+import styles from './ArmourSection.module.css'
+
 import ItemEdit from "./Item/ItemEdit";
 import Item from "./Item/Item";
+import { csType } from "cs";
 
 interface ArmourSectionProps {
   armours: ArmourItem[];
@@ -11,8 +14,10 @@ interface ArmourSectionProps {
 function ArmourSection({ armours: armourList, onUpdateItem }: ArmourSectionProps) {
   return (
     <>
+    <section className={styles.armourSection}>
       {armourList.map((item, index) => (
         <EditableItem
+          className={styles.armour}
           key={item.name}
           item={item}
           onItemUpdate={(type, newItem) => {
@@ -20,6 +25,7 @@ function ArmourSection({ armours: armourList, onUpdateItem }: ArmourSectionProps
           }}
         />
       ))}
+      </section>
       <hr />
       <ItemEdit editType="new" onSubmit={(item) => onUpdateItem("new", item)} />
       <hr />
@@ -29,14 +35,16 @@ function ArmourSection({ armours: armourList, onUpdateItem }: ArmourSectionProps
 
 interface EditableItemProps {
   item: ArmourItem;
+  className: csType
   onItemUpdate: (updateType: "edit" | "complete" | "delete", item: ArmourItem) => void;
 }
 
-function EditableItem({ item, onItemUpdate }: EditableItemProps) {
+function EditableItem({ item, className, onItemUpdate }: EditableItemProps) {
   const [editing, setEditing] = useState(false);
   if (editing) {
     return (
       <ItemEdit
+        className={className}
         editType="edit"
         onSubmit={(newItem) => {
           setEditing(false);
@@ -49,6 +57,8 @@ function EditableItem({ item, onItemUpdate }: EditableItemProps) {
 
   return (
     <Item
+      className={className}
+
       item={item}
       onEdit={() => setEditing(true)}
       onDelete={() => onItemUpdate("delete", item)}

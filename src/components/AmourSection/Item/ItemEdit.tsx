@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { ArmourItem, Requirement } from "../../../types";
 import styles from "./ItemEdit.module.css";
+import cs, { csType } from "cs";
 
 type TypeOfEdit = "new" | "edit";
 
 interface props {
-  onSubmit?: (newItem: ArmourItem) => void;
   details?: ArmourItem;
   editType: TypeOfEdit;
+  className?: csType;
+  onSubmit?: (newItem: ArmourItem) => void;
 }
 
-function ItemEdit({ onSubmit, details, editType = "new" }: props) {
+function ItemEdit({ onSubmit, details, editType = "new", className }: props) {
   const [name, setName] = useState(details?.name ?? "");
   const [requirements, setRequirements] = useState<Requirement[]>(() => details?.requirements ?? []);
 
@@ -21,6 +23,7 @@ function ItemEdit({ onSubmit, details, editType = "new" }: props) {
 
   return (
     <form
+      className={cs(className)}
       onSubmit={(event) => {
         event.preventDefault();
         if (name === "") return;

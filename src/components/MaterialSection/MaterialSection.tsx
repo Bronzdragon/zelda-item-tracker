@@ -4,6 +4,7 @@ import { ReactSortable } from "react-sortablejs";
 import { ArmourItem, Material } from "../../types";
 import MaterialRow, { DisplayState } from "./MaterialRow";
 import MaterialHeader from "./MaterialHeader";
+import usePersistentState from "../../usePersistentState";
 
 interface MaterialSectionProps {
   armours: ArmourItem[];
@@ -19,7 +20,7 @@ export interface SortState {
 const defaultSortState = { sortedBy: "custom", direction: "other" } as const;
 
 function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSectionProps) {
-  const [materialSort, setMaterialSort] = useState<{ id: string }[]>([]);
+  const [materialSort, setMaterialSort] = usePersistentState<{ id: string }[]>('sort', []);
   const [sortState, setSortState] = useState<SortState>(defaultSortState);
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const requiredByMaterial = getMaterialsFromArmours(armours);
@@ -31,7 +32,7 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
     if (newMaterials.length <= 0) return;
 
     setMaterialSort([...materialSort, ...newMaterials.map(({name: id}) => ({ id }))]);
-  }, [materialSort, materials]);
+  }, [materialSort, materials, setMaterialSort]);
 
   const onSortChanged = (state: SortState) => {
     const newSort = [...materialSort];
@@ -78,7 +79,6 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
 
   const [rowsWithActiveTags, rowsWithoutActiveTags] = divideArray(materialSort, (element) => {
     const material = materials.find((material) => material.name === element.id);
-    console.log(material)
     return Boolean(material?.tags.some((tag) => activeTags.includes(tag)));
   });
 
@@ -172,12 +172,3 @@ function divideArray<T>(inputArray: T[], predicate: (element: T) => boolean): [T
 
   return [result.hit, result.miss];
 }
-
-// Temp:
-const MaterialTagMap: Record<string, string[]> = {
-  "Green Lizalfos Tail": ["monster", "lizalfos", "tail"],
-  "Hinox Horn": ["monster", "hinox", "horn"],
-  "Star Fragment": ["special", "rock", "tag with spaces"],
-  "Blue Lizalfos Tail": ["monster", "lizalfos", "tail"],
-  "Stalnox Guts": ["monster", "hinox", "guts"],
-};

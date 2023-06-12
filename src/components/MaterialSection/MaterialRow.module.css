@@ -24,10 +24,10 @@
   text-align: center;
 }
 
-.highlight {
-  /* filter: brightness(130%); */
-}
-
 .lowlight {
   filter: brightness(var(--lowlight-brightness)) saturate(var(--lowlight-saturation));
+}
+
+.hide {
+  display: none;
 }

@@ -27,17 +27,17 @@ function MaterialRow({
   activeTags,
   dragHandleClass,
   visible = true,
-  displayState = 'regular',
+  displayState = "regular",
   onAmountUpdate,
   onTagsUpdated,
   onTagToggled,
 }: MaterialRowProps) {
   const stillRequired = Math.max(numRequired - numPossessed, 0);
 
-  if (!visible) return null;
+  // if (!visible) return null;
 
   return (
-    <tr className={cs(stillRequired <= 0 && styles.done, styles.row, styles[displayState])}>
+    <tr className={cs(stillRequired <= 0 && styles.done, styles.row, styles[displayState], !visible && styles.hide )}>
       <td className={dragHandleClass}>
         <img src={dotGrid} alt="handle" />
       </td>

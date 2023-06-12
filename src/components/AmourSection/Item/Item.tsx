@@ -3,17 +3,19 @@ import styles from "./Item.module.css";
 import deleteButton from "./delete.svg";
 import editButton from "./edit.svg";
 import doneButton from "./done.svg";
+import cs, { csType } from "cs";
 
 interface props {
   item: ArmourItem;
+  className?: csType
   onDelete?: () => void;
   onEdit?: (item: ArmourItem) => void;
   onComplete?: (item: ArmourItem) => void;
 }
 
-function Item({ item, onDelete, onEdit, onComplete }: props) {
+function Item({ item, className, onDelete, onEdit, onComplete }: props) {
   return (
-    <div>
+    <div className={cs(className)}>
       <h1>
       <section className={styles.buttonBox}><button className={styles.editButton} aria-label="Delete" onClick={onDelete}>
         <img src={deleteButton} alt="delete item." />
