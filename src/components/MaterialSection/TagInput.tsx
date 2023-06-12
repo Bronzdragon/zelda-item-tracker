@@ -2,6 +2,7 @@ import { useState } from "react";
 import cs from "cs";
 import styles from "./TagInput.module.css";
 import editSrc from "./edit.svg";
+import confirmSrc from "./confirm.svg";
 
 interface tagInfo {
   name: string;
@@ -37,13 +38,16 @@ function TagInput({ tags, onTagClicked, onUpdateTags }: TagInputProps) {
         const tagString = new FormData(event.currentTarget).get("tags");
         if (tagString === null) return;
         if (typeof tagString !== "string") throw new TypeError("Expected a string out of this form.");
-        const tags = tagString.split(",").map((str) => str.trim().toLocaleLowerCase());
+        const tags = tagString
+          .split(",")
+          .map((str) => str.trim().toLocaleLowerCase())
+          .filter((str) => str !== "");
 
         onUpdateTags?.(tags);
       }}
     >
       <button className={styles.editButton} type="submit">
-        <img src={editSrc} alt="Edit tags" />
+        <img src={editing ? confirmSrc : editSrc} alt="Edit tags" />
       </button>
       {innerElement}
     </form>
