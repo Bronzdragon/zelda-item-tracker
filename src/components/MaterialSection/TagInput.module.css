@@ -29,3 +29,13 @@
   overflow: hidden;
   visibility: hidden;
 }
+
+.editButton {
+  background-color: transparent;
+  border: none;
+  
+}
+
+.editButton img {
+  width: 1em;
+}
