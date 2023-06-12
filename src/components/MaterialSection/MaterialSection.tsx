@@ -1,12 +1,9 @@
 import styles from "./MaterialSection.module.css";
-import NumberInput from "./NumberInput";
+import { useEffect, useState } from "react";
 import { ItemInterface, ReactSortable } from "react-sortablejs";
 import { ArmourItem, Material } from "../../types";
-import { useEffect, useState } from "react";
-import dotGrid from "./dot-grid.svg";
-import sortAscendingImage from "./sort-ascending.svg";
-import sortDescendingImage from "./sort-descending.svg";
-import cs from "cs";
+import MaterialRow from "./MaterialRow";
+import MaterialHeader from "./MaterialHeader";
 
 interface MaterialSortElement extends ItemInterface {
   id: string;
@@ -19,21 +16,20 @@ interface MaterialSectionProps {
   // setMaterials: React.Dispatch<React.SetStateAction<Material[]>>;
 }
 
-type sortDirection = "asc" | "dec" | "other";
-// type sortOptions =
-interface SortState {
+export interface SortState {
   sortedBy: "name" | "have" | "need" | "tags" | "custom";
-  direction: sortDirection;
+  direction: "asc" | "dec" | "other";
 }
 const defaultSortState = { sortedBy: "custom", direction: "other" } as const;
 
 function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSectionProps) {
   const [materialSort, setMaterialSort] = useState<MaterialSortElement[]>([]);
   const [sortState, setSortState] = useState<SortState>(defaultSortState);
+  const [activeTags, setActiveTags] = useState<string[]>([]);
   const requiredByMaterial = getMaterialsFromArmours(armours);
 
+  // Add missing materials to our sort.
   useEffect(() => {
-    // Add missing materials to our sort.
     const existingMaterials = new Set(materialSort.map((mat) => mat.id));
     const newMaterials = materials.filter((material) => !existingMaterials.has(material.name));
     if (newMaterials.length <= 0) return;
@@ -84,6 +80,11 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
     setSortState(state);
   };
 
+  const [rowsWithActiveTags, rowsWithoutActiveTags] = divideArray(materialSort, (element) => {
+    const material = materials.find((material) => material.name === element.id);
+    return Boolean(material?.tags.some((tag) => activeTags.includes(tag)));
+  });
+
   return (
     <table className={styles.table}>
       <thead>
@@ -105,9 +106,12 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
           if (event.oldIndex !== event.newIndex) setSortState({ direction: "other", sortedBy: "custom" });
         }}
       >
-        {materialSort.map((mat) => {
+        {[...rowsWithActiveTags, ...rowsWithoutActiveTags].map((mat) => {
           const material = materials.find((material) => material.name === mat.id);
           if (!material) return null;
+
+          // TEMP! Delete me later
+          material.tags = MaterialTagMap[material.name];
 
           return (
             <MaterialRow
@@ -117,82 +121,20 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
               numPossessed={material.amountOwned}
               numRequired={requiredByMaterial[material.name]}
               visible={material.name in requiredByMaterial}
-              onChange={(amount) => onMaterialUpdate(material.name, amount)}
+              onAmountUpdate={(amount) => onMaterialUpdate(material.name, amount)}
+              activeTags={activeTags}
+              onTagToggled={(tag, state) => {
+                if (state) {
+                  setActiveTags((prev) => [...prev, tag]);
+                } else {
+                  setActiveTags((prev) => prev.filter((t) => t !== tag));
+                }
+              }}
             />
           );
         })}
       </ReactSortable>
     </table>
-  );
-}
-
-type MaterialHeaderProps = {
-  name: SortState["sortedBy"];
-  sortInfo?: { state: SortState; onSortChanged?: (newState: SortState) => void };
-};
-
-function MaterialHeader({ name, sortInfo: sort }: MaterialHeaderProps) {
-  return (
-    <th
-      className={styles.tableHeader}
-      onClick={() => {
-        if (!sort?.state) return;
-        const direction = sort.state.sortedBy === name && sort.state.direction === "asc" ? "dec" : "asc";
-        sort?.onSortChanged?.({ sortedBy: name, direction });
-      }}
-    >
-      {name}
-      {sort ? (
-        <img
-          src={
-            sort.state.sortedBy === name && sort.state.direction === "asc" ? sortAscendingImage : sortDescendingImage
-          }
-          alt="sort by name"
-        />
-      ) : null}
-    </th>
-  );
-}
-
-interface MaterialRowProps {
-  material: Material;
-  numPossessed: number;
-  numRequired: number;
-  onChange?: (num: number) => void;
-  dragHandleClass?: string;
-  visible?: boolean;
-}
-
-function MaterialRow({
-  material,
-  numPossessed,
-  numRequired,
-  onChange,
-  dragHandleClass,
-  visible = true,
-}: MaterialRowProps) {
-  const stillRequired = Math.max(numRequired - numPossessed, 0);
-
-  if (!visible) return null;
-
-  return (
-    <tr className={cs(stillRequired <= 0 && styles.done)}>
-      <td className={dragHandleClass}>
-        <img src={dotGrid} alt="handle" />
-      </td>
-      <td>{material.name}</td>
-      {/*name*/}
-      <td>
-        <NumberInput min={0} step={1} onChange={onChange} value={numPossessed} className={styles.haveInput} />
-        {/*have*/}
-      </td>
-      <td className={styles["number-cell"]}>{`${stillRequired} (${numRequired})`}</td>
-      {/* need */}
-      <td>
-        <input type="text" />
-        {/* tags */}
-      </td>
-    </tr>
   );
 }
 
@@ -211,3 +153,29 @@ function getMaterialsFromArmours(armours: ArmourItem[]) {
 
   return obj;
 }
+
+function divideArray<T>(inputArray: T[], predicate: (element: T) => boolean): [T[], T[]] {
+  const result = inputArray.reduce<{ hit: T[]; miss: T[] }>(
+    (result, element) => {
+      if (predicate(element)) {
+        result.hit.push(element);
+      } else {
+        result.miss.push(element);
+      }
+
+      return result;
+    },
+    { hit: [], miss: [] }
+  );
+
+  return [result.hit, result.miss];
+}
+
+// Temp:
+const MaterialTagMap: Record<string, string[]> = {
+  "Green Lizalfos Tail": ["monster", "lizalfos", "tail"],
+  "Hinox Horn": ["monster", "hinox", "horn"],
+  "Star Fragment": ["special", "rock", "tag with spaces"],
+  "Blue Lizalfos Tail": ["monster", "lizalfos", "tail"],
+  "Stalnox Guts": ["monster", "hinox", "guts"],
+};
