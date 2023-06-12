@@ -17,9 +17,11 @@ interface TagInputProps {
 function TagInput({ tags, onTagClicked }: TagInputProps) {
   const [editing, setEditing] = useState(false);
 
+  const lowlightOthers = tags.some(tag => tag.active);
+
   if (editing)
     return (
-      <form onSubmit={(event) => setEditing(false)}>
+      <form onSubmit={() => setEditing(false)}>
         <input value={tags.map((tag) => tag.name).join(", ")} />
       </form>
     );
@@ -30,7 +32,7 @@ function TagInput({ tags, onTagClicked }: TagInputProps) {
         <img src={editSrc} alt="Edit tags" />
       </button>
       {tags.map((tag) => (
-        <Tag tag={tag} onClick={onTagClicked} />
+        <Tag tag={tag} lowlight={!tag.active && lowlightOthers} onClick={onTagClicked} />
       ))}
     </>
   );
@@ -40,21 +42,21 @@ export default TagInput;
 
 interface TagPros {
   tag: tagInfo;
+  lowlight?: boolean;
   onClick?: (name: string) => void;
 }
 
-function Tag({ tag, onClick }: TagPros) {
+function Tag({ tag, lowlight, onClick }: TagPros) {
   return (
     <span
-      className={cs(styles.tag, tag.active && styles.highlight)}
+      className={cs(styles.tag, tag.active && styles.highlight, lowlight && styles.lowlight)}
       style={{
-        // '--color': 'red',
-        backgroundColor: `hsl(${cheapHashString(tag.name) % 360}, 60%, ${tag.active ? 40 : 40}%)`,
+        '--tag-color': (cheapHashString(tag.name) % 360),
       }}
       onClick={() => onClick?.(tag.name)}
       title={tag.name}
     >
-      {`${tag.name} ${tag.active ? "✓" : ""}`}
+      {tag.name}
     </span>
   );
 }

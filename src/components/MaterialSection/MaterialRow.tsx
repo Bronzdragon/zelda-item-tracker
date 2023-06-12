@@ -1,30 +1,41 @@
-import styles from "./MaterialSection.module.css";
+import styles from "./MaterialRow.module.css";
 import NumberInput from "./NumberInput";
 import { Material } from "../../types";
 import dotGrid from "./dot-grid.svg";
 import cs from "cs";
 import TagInput from "./TagInput";
 
+export type DisplayState = "lowlight" | "regular" | "highlight";
+
 interface MaterialRowProps {
   material: Material;
   numPossessed: number;
   numRequired: number;
-  onAmountUpdate?: (num: number) => void;
+  activeTags: string[];
   dragHandleClass?: string;
   visible?: boolean;
-  activeTags: string[];
+  displayState?: DisplayState;
+  onAmountUpdate?: (num: number) => void;
   onTagToggled?: (tag: string, state: boolean) => void;
 }
 
 function MaterialRow({
-  material, numPossessed, numRequired, onAmountUpdate, dragHandleClass, visible = true, activeTags, onTagToggled,
+  material,
+  numPossessed,
+  numRequired,
+  activeTags,
+  dragHandleClass,
+  visible = true,
+  displayState = 'regular',
+  onAmountUpdate,
+  onTagToggled,
 }: MaterialRowProps) {
   const stillRequired = Math.max(numRequired - numPossessed, 0);
 
   if (!visible) return null;
 
   return (
-    <tr className={cs(stillRequired <= 0 && styles.done)}>
+    <tr className={cs(stillRequired <= 0 && styles.done, styles.row, styles[displayState])}>
       <td className={dragHandleClass}>
         <img src={dotGrid} alt="handle" />
       </td>
@@ -38,10 +49,11 @@ function MaterialRow({
       {/* need */}
       <td>
         <TagInput
-          tags={material.tags.map(name => ({ name, active: activeTags.includes(name) }))}
+          tags={material.tags.map((name) => ({ name, active: activeTags.includes(name) }))}
           onTagClicked={(tag) => {
             onTagToggled?.(tag, !activeTags.includes(tag));
-          }} />
+          }}
+        />
       </td>
     </tr>
   );

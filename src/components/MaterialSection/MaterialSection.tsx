@@ -2,7 +2,7 @@ import styles from "./MaterialSection.module.css";
 import { useEffect, useState } from "react";
 import { ItemInterface, ReactSortable } from "react-sortablejs";
 import { ArmourItem, Material } from "../../types";
-import MaterialRow from "./MaterialRow";
+import MaterialRow, { DisplayState } from "./MaterialRow";
 import MaterialHeader from "./MaterialHeader";
 
 interface MaterialSortElement extends ItemInterface {
@@ -113,9 +113,13 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
           // TEMP! Delete me later
           material.tags = MaterialTagMap[material.name];
 
+          const displayState: DisplayState =
+            rowsWithActiveTags.length === 0 ? "regular" : (rowsWithActiveTags.includes(mat) ? "highlight" : "lowlight");
+
           return (
             <MaterialRow
               key={material.name}
+              displayState={displayState}
               dragHandleClass={styles.dragHandle}
               material={material}
               numPossessed={material.amountOwned}

@@ -1,3 +1,8 @@
+:root {
+  --lowlight-brightness: 45%;
+  --lowlight-saturation: 0.2;
+}
+
 .App {
   background-color: #282c34;
   color: white;

@@ -1,0 +1,33 @@
+/* Alternating colours (default) */
+.row:nth-child(even) {
+  background-color: rgb(64, 70, 82);
+}
+.row:nth-child(odd) {
+  background-color: rgb(48, 53, 63);
+}
+
+/* Alternating colours (done) */
+.row.done:nth-child(even) {
+  background-color: rgb(65, 101, 67);
+}
+
+.row.done:nth-child(odd) {
+  background-color: rgb(57, 73, 56);
+}
+
+.haveInput {
+  width: 3em;
+}
+
+.number-cell {
+  padding: 0 0.1em;
+  text-align: center;
+}
+
+.highlight {
+  /* filter: brightness(130%); */
+}
+
+.lowlight {
+  filter: brightness(var(--lowlight-brightness)) saturate(var(--lowlight-saturation));
+}

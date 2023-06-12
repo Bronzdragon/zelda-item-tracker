@@ -1,3 +1,10 @@
+// Needed so that we can provide custom CSS properties...
+declare module 'react' {
+  interface CSSProperties {
+      [key: `--${string}`]: string | number
+  }
+}
+
 export type ArmourItem = {
   name: string;
   requirements: Requirement[];
