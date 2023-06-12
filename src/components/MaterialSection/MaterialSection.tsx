@@ -1,18 +1,14 @@
 import styles from "./MaterialSection.module.css";
 import { useEffect, useState } from "react";
-import { ItemInterface, ReactSortable } from "react-sortablejs";
+import { ReactSortable } from "react-sortablejs";
 import { ArmourItem, Material } from "../../types";
 import MaterialRow, { DisplayState } from "./MaterialRow";
 import MaterialHeader from "./MaterialHeader";
 
-interface MaterialSortElement extends ItemInterface {
-  id: string;
-}
-
 interface MaterialSectionProps {
   armours: ArmourItem[];
   materials: Material[];
-  onMaterialUpdate(materialName: string, newTotal: number): void;
+  onMaterialUpdate(materialName: string, newTotal: number, tags: string[]): void;
   // setMaterials: React.Dispatch<React.SetStateAction<Material[]>>;
 }
 
@@ -23,7 +19,7 @@ export interface SortState {
 const defaultSortState = { sortedBy: "custom", direction: "other" } as const;
 
 function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSectionProps) {
-  const [materialSort, setMaterialSort] = useState<MaterialSortElement[]>([]);
+  const [materialSort, setMaterialSort] = useState<{ id: string }[]>([]);
   const [sortState, setSortState] = useState<SortState>(defaultSortState);
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const requiredByMaterial = getMaterialsFromArmours(armours);
@@ -34,7 +30,7 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
     const newMaterials = materials.filter((material) => !existingMaterials.has(material.name));
     if (newMaterials.length <= 0) return;
 
-    setMaterialSort([...materialSort, ...newMaterials.map((Material) => ({ id: Material.name }))]);
+    setMaterialSort([...materialSort, ...newMaterials.map(({name: id}) => ({ id }))]);
   }, [materialSort, materials]);
 
   const onSortChanged = (state: SortState) => {
@@ -82,6 +78,7 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
 
   const [rowsWithActiveTags, rowsWithoutActiveTags] = divideArray(materialSort, (element) => {
     const material = materials.find((material) => material.name === element.id);
+    console.log(material)
     return Boolean(material?.tags.some((tag) => activeTags.includes(tag)));
   });
 
@@ -111,10 +108,10 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
           if (!material) return null;
 
           // TEMP! Delete me later
-          material.tags = MaterialTagMap[material.name];
+          // material.tags = [...new Set([...material.tags, ...MaterialTagMap[material.name] ?? []])]
 
           const displayState: DisplayState =
-            rowsWithActiveTags.length === 0 ? "regular" : (rowsWithActiveTags.includes(mat) ? "highlight" : "lowlight");
+            rowsWithActiveTags.length === 0 ? "regular" : rowsWithActiveTags.includes(mat) ? "highlight" : "lowlight";
 
           return (
             <MaterialRow
@@ -125,8 +122,9 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
               numPossessed={material.amountOwned}
               numRequired={requiredByMaterial[material.name]}
               visible={material.name in requiredByMaterial}
-              onAmountUpdate={(amount) => onMaterialUpdate(material.name, amount)}
               activeTags={activeTags}
+              onAmountUpdate={(amount) => onMaterialUpdate(material.name, amount, material.tags)}
+              onTagsUpdated={(tags) => onMaterialUpdate(material.name, material.amountOwned, tags)}
               onTagToggled={(tag, state) => {
                 if (state) {
                   setActiveTags((prev) => [...prev, tag]);

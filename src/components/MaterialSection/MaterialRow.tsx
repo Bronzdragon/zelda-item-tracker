@@ -16,6 +16,7 @@ interface MaterialRowProps {
   visible?: boolean;
   displayState?: DisplayState;
   onAmountUpdate?: (num: number) => void;
+  onTagsUpdated?: (tags: string[]) => void;
   onTagToggled?: (tag: string, state: boolean) => void;
 }
 
@@ -28,6 +29,7 @@ function MaterialRow({
   visible = true,
   displayState = 'regular',
   onAmountUpdate,
+  onTagsUpdated,
   onTagToggled,
 }: MaterialRowProps) {
   const stillRequired = Math.max(numRequired - numPossessed, 0);
@@ -49,6 +51,7 @@ function MaterialRow({
       {/* need */}
       <td>
         <TagInput
+          onUpdateTags={onTagsUpdated}
           tags={material.tags.map((name) => ({ name, active: activeTags.includes(name) }))}
           onTagClicked={(tag) => {
             onTagToggled?.(tag, !activeTags.includes(tag));

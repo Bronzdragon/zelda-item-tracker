@@ -14,27 +14,39 @@ interface TagInputProps {
   onUpdateTags?: (newTags: string[]) => void;
 }
 
-function TagInput({ tags, onTagClicked }: TagInputProps) {
+function TagInput({ tags, onTagClicked, onUpdateTags }: TagInputProps) {
   const [editing, setEditing] = useState(false);
 
-  const lowlightOthers = tags.some(tag => tag.active);
-
-  if (editing)
-    return (
-      <form onSubmit={() => setEditing(false)}>
-        <input value={tags.map((tag) => tag.name).join(", ")} />
-      </form>
-    );
-
-  return (
+  const lowlightOthers = tags.some((tag) => tag.active);
+  const innerElement = editing ? (
+    <input name="tags" defaultValue={tags.map((tag) => tag.name).join(", ")} />
+  ) : (
     <>
-      <button className={styles.editButton} onClick={() => setEditing(true)}>
-        <img src={editSrc} alt="Edit tags" />
-      </button>
       {tags.map((tag) => (
-        <Tag tag={tag} lowlight={!tag.active && lowlightOthers} onClick={onTagClicked} />
+        <Tag key={tag.name} tag={tag} lowlight={!tag.active && lowlightOthers} onClick={onTagClicked} />
       ))}
     </>
+  );
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        setEditing((prev) => !prev);
+
+        const tagString = new FormData(event.currentTarget).get("tags");
+        if (tagString === null) return;
+        if (typeof tagString !== "string") throw new TypeError("Expected a string out of this form.");
+        const tags = tagString.split(",").map((str) => str.trim().toLocaleLowerCase());
+
+        onUpdateTags?.(tags);
+      }}
+    >
+      <button className={styles.editButton} type="submit">
+        <img src={editSrc} alt="Edit tags" />
+      </button>
+      {innerElement}
+    </form>
   );
 }
 
@@ -51,7 +63,7 @@ function Tag({ tag, lowlight, onClick }: TagPros) {
     <span
       className={cs(styles.tag, tag.active && styles.highlight, lowlight && styles.lowlight)}
       style={{
-        '--tag-color': (cheapHashString(tag.name) % 360),
+        "--tag-color": cheapHashString(tag.name) % 360,
       }}
       onClick={() => onClick?.(tag.name)}
       title={tag.name}
@@ -64,9 +76,4 @@ function Tag({ tag, lowlight, onClick }: TagPros) {
 function cheapHashString(stringInput: string) {
   const offset = 51;
   return Math.abs([...stringInput].reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc) + offset, 0));
-}
-
-interface TagEditProps {}
-function TagEdit({}: TagEditProps) {
-  // TODO:
 }

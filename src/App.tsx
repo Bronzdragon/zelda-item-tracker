@@ -27,8 +27,24 @@ function App() {
     }
   }, [armourList, materialList]);
 
+  console.log(materialList)
+
   return (
     <div className="App">
+      {armourList.length > 0 ? (
+        <Collapsible>
+          <MaterialSection
+            armours={armourList}
+            materials={materialList}
+            onMaterialUpdate={(name, amountOwned, tags) => {
+              console.log(`Updating material: ${name}. New tags: ${JSON.stringify(tags)}`)
+              setMaterialList(
+                materialList.map((material) => material.name === name ? { name, amountOwned, tags } : material)
+              );
+            }}
+          ></MaterialSection>
+        </Collapsible>
+      ) : null}
       <Collapsible>
         <ArmourSection
           armours={armourList}
@@ -77,7 +93,7 @@ function App() {
               )
                 return;
 
-              setArmourList(armourList.filter((armour) => armour.name === item.name));
+              setArmourList(armourList.filter((armour) => armour.name !== item.name));
               setMaterialList(
                 materialList.map((material) => {
                   const requirement = requirements.find((requirements) => requirements.name === material.name);
@@ -89,19 +105,7 @@ function App() {
           }}
         ></ArmourSection>
       </Collapsible>
-      {armourList.length > 0 ? (
-        <Collapsible>
-          <MaterialSection
-            armours={armourList}
-            materials={materialList}
-            onMaterialUpdate={(name, amountOwned) => {
-              setMaterialList(
-                materialList.map((material) => (material.name === name ? { ...material, amountOwned } : material))
-              );
-            }}
-          ></MaterialSection>
-        </Collapsible>
-      ) : null}
+      
     </div>
   );
 }
