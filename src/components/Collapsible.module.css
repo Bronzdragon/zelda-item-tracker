@@ -1,17 +1,22 @@
+:root {
+  --collapse-width: 0.3em;
+  --collapse-border-size: 0.2em;
+}
+
 .inset {
-  margin-left: 2em;
+  margin-left: calc(0.5em + var(--collapse-width) * 2);
 }
 
 .line {
   display: flex;
   align-items: center;
-  margin-left: 1em;
+  margin: 0 var(--collapse-width);
 }
 
 .line::after {
-  margin: 0px 1em;
+  margin: 0 var(--collapse-width);
   content: "";
   flex: 1 1 auto;
-  border: 5px solid #ffffff;
-  border-radius: 5px;
+  border: var(--collapse-border-size) solid #ffffff;
+  border-radius: var(--collapse-border-size);
 }

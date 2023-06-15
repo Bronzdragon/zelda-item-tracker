@@ -19,7 +19,7 @@ interface TagInputProps {
 function TagInput({ tags, editing = false, onTagClicked, onUpdateTags, onToggleEdit }: TagInputProps) {
   const lowlightOthers = tags.some((tag) => tag.active);
   const innerElement = editing ? (
-    <input name="tags" defaultValue={tags.map((tag) => tag.name).join(", ")} />
+    <input autoFocus name="tags" defaultValue={tags.map((tag) => tag.name).join(", ")} />
   ) : (
     <>
       {tags.map((tag) => (

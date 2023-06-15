@@ -29,8 +29,13 @@ function ItemEdit({ onSubmit, details, editType = "new", className }: props) {
         if (name === "") return;
 
         onSubmit?.({ name, requirements: requirements.filter((req) => req.name !== "" && req.amountRequired > 0) });
-        setName("");
-        setRequirements(getDefaultRequirements());
+
+        if (editType === "new") {
+          // Clear the form for the next element
+          setName("");
+          setRequirements(getDefaultRequirements());
+          event.currentTarget.reset();
+        }
       }}
     >
       <label htmlFor="name" className={styles.label}>
@@ -42,7 +47,7 @@ function ItemEdit({ onSubmit, details, editType = "new", className }: props) {
         name="name"
         value={name}
         onChange={(event) => setName(event.target.value)}
-        placeholder="Armour piece..."
+        placeholder="Armour piece"
       ></input>
       <table>
         <thead>
@@ -57,6 +62,7 @@ function ItemEdit({ onSubmit, details, editType = "new", className }: props) {
               key={index}
               value={requirement}
               onChange={(newValue) => {
+                console.log(newValue);
                 if (!newValue.name) newValue.amountRequired = 0;
                 setRequirements((oldRequirements) => [
                   ...oldRequirements.slice(0, index),
@@ -90,8 +96,8 @@ function RequirementInput({ value: { name, amountRequired: amount }, onChange }:
         <input
           type="text"
           name={`item`}
-          value={name}
-          placeholder="Material..."
+          placeholder="Material"
+          defaultValue={name}
           onChange={(event) => onChange({ name: event.target.value, amountRequired: amount })}
         />
       </td>
@@ -102,7 +108,7 @@ function RequirementInput({ value: { name, amountRequired: amount }, onChange }:
           step={1}
           name={`amount`}
           className={styles["number-input"]}
-          value={amount}
+          defaultValue={amount}
           onChange={(event) => onChange({ name, amountRequired: Number(event.target.value) })}
         />
       </td>
