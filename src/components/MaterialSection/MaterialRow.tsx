@@ -1,6 +1,6 @@
 import styles from "./MaterialRow.module.css";
 import NumberInput from "./NumberInput";
-import { Material } from "../../types";
+import { ArmourItem, Material } from "../../types";
 import dotGrid from "./dot-grid.svg";
 import cs from "cs";
 import TagInput from "./TagInput";
@@ -13,6 +13,7 @@ interface MaterialRowProps {
   numPossessed: number;
   numRequired: number;
   activeTags: string[];
+  relevantArmours?: ArmourItem[];
   dragHandleClass?: string;
   visible?: boolean;
   displayState?: DisplayState;
@@ -27,6 +28,7 @@ function MaterialRow({
   numRequired,
   activeTags,
   dragHandleClass,
+  relevantArmours = [],
   visible = true,
   displayState = "regular",
   onAmountUpdate,
@@ -57,6 +59,7 @@ function MaterialRow({
           editing={editing}
           onUpdateTags={onTagsUpdated}
           tags={material.tags.map((name) => ({ name, active: activeTags.includes(name) }))}
+          readonlyTags={relevantArmours.map(({ name }) => ({ name, active: activeTags.includes(name) }))}
           onTagClicked={(tag) => {
             onTagToggled?.(tag, !activeTags.includes(tag));
           }}

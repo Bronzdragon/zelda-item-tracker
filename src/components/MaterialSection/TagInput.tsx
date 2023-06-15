@@ -10,19 +10,28 @@ interface tagInfo {
 
 interface TagInputProps {
   tags: tagInfo[];
+  readonlyTags?: readonly tagInfo[];
   editing?: boolean;
   onTagClicked?: (tagName: string) => void;
   onUpdateTags?: (newTags: string[]) => void;
   onToggleEdit?: () => void;
 }
 
-function TagInput({ tags, editing = false, onTagClicked, onUpdateTags, onToggleEdit }: TagInputProps) {
-  const lowlightOthers = tags.some((tag) => tag.active);
+function TagInput({
+  tags,
+  readonlyTags = [],
+  editing = false,
+  onTagClicked,
+  onUpdateTags,
+  onToggleEdit,
+}: TagInputProps) {
+  const combinedTags = [...tags, ...readonlyTags];
+  const lowlightOthers = combinedTags.some((tag) => tag.active);
   const innerElement = editing ? (
     <input autoFocus name="tags" defaultValue={tags.map((tag) => tag.name).join(", ")} />
   ) : (
     <>
-      {tags.map((tag) => (
+      {combinedTags.map((tag) => (
         <Tag key={tag.name} tag={tag} lowlight={!tag.active && lowlightOthers} onClick={onTagClicked} />
       ))}
     </>
@@ -55,13 +64,13 @@ function TagInput({ tags, editing = false, onTagClicked, onUpdateTags, onToggleE
 
 export default TagInput;
 
-interface TagPros {
+interface TagProps {
   tag: tagInfo;
   lowlight?: boolean;
   onClick?: (name: string) => void;
 }
 
-function Tag({ tag, lowlight, onClick }: TagPros) {
+function Tag({ tag, lowlight, onClick }: TagProps) {
   return (
     <span
       className={cs(styles.tag, tag.active && styles.highlight, lowlight && styles.lowlight)}

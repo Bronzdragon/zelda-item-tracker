@@ -20,7 +20,7 @@ export interface SortState {
 const defaultSortState = { sortedBy: "custom", direction: "other" } as const;
 
 function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSectionProps) {
-  const [materialSort, setMaterialSort] = usePersistentState<{ id: string }[]>('sort', []);
+  const [materialSort, setMaterialSort] = usePersistentState<{ id: string }[]>("sort", []);
   const [sortState, setSortState] = useState<SortState>(defaultSortState);
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const requiredByMaterial = getMaterialsFromArmours(armours);
@@ -31,7 +31,7 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
     const newMaterials = materials.filter((material) => !existingMaterials.has(material.name));
     if (newMaterials.length <= 0) return;
 
-    setMaterialSort([...materialSort, ...newMaterials.map(({name: id}) => ({ id }))]);
+    setMaterialSort([...materialSort, ...newMaterials.map(({ name: id }) => ({ id }))]);
   }, [materialSort, materials, setMaterialSort]);
 
   const onSortChanged = (state: SortState) => {
@@ -79,7 +79,11 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
 
   const [rowsWithActiveTags, rowsWithoutActiveTags] = divideArray(materialSort, (element) => {
     const material = materials.find((material) => material.name === element.id);
-    return Boolean(material?.tags.some((tag) => activeTags.includes(tag)));
+    const hasActiveMaterial = material?.tags.some((tag) => activeTags.includes(tag)) ?? false;
+    const hasActiveArmour = armours
+      .filter(({ name }) => activeTags.includes(name))
+      .some(({ requirements }) => requirements.some((requirement) => requirement.name === element.id));
+    return hasActiveMaterial || hasActiveArmour;
   });
 
   return (
@@ -107,8 +111,9 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
           const material = materials.find((material) => material.name === mat.id);
           if (!material) return null;
 
-          // TEMP! Delete me later
-          // material.tags = [...new Set([...material.tags, ...MaterialTagMap[material.name] ?? []])]
+          const relevantArmours = armours.filter(({ requirements }) =>
+            requirements.some((requirement) => requirement.name === mat.id)
+          );
 
           const displayState: DisplayState =
             rowsWithActiveTags.length === 0 ? "regular" : rowsWithActiveTags.includes(mat) ? "highlight" : "lowlight";
@@ -122,6 +127,7 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
               numPossessed={material.amountOwned}
               numRequired={requiredByMaterial[material.name]}
               visible={material.name in requiredByMaterial}
+              relevantArmours={relevantArmours}
               activeTags={activeTags}
               onAmountUpdate={(amount) => onMaterialUpdate(material.name, amount, material.tags)}
               onTagsUpdated={(tags) => onMaterialUpdate(material.name, material.amountOwned, tags)}
