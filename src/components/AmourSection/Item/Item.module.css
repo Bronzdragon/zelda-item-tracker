@@ -1,26 +1,67 @@
+.container {
+  --shadow-size: 0.2em;
+  --container-padding: 0.2em;
+  --container-rounding: 1em;
+
+  border-radius: var(--container-rounding);
+  border: 0.1em solid rgba(255, 255, 255, 0.05);
+
+  margin: calc(var(--shadow-size) / 1.5);
+  box-shadow: calc(var(--shadow-size) / 2) var(--shadow-size) var(--shadow-size) rgba(0, 0, 0, 0.412);
+
+  padding: var(--container-padding);
+  padding-bottom: 0.4em;
+}
+
+.cell.done {
+  background-color: var(--done-colour);
+}
+
 .cell {
-  padding: 0.1em 0.5em;
+  border-radius: 0.5em;
+  padding: 0 0.2em;
+}
+.cell.amount {
+  text-align: center;
 }
 
 .editButton {
   background-color: transparent;
   border: none;
-  margin: 0 0.2em;
+  border-radius: 0.2em;
   box-sizing: border-box;
+  padding: 0.1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .editButton img {
   width: 1.5em;
-  
 }
 
 .buttonBox {
-  padding-right: 0.7em;
-  vertical-align: middle;
-  display: inline-block;
+  display: flex;
 }
 
 .editButton:hover {
-  border: lightcoral solid 1px;
+  /* border: lightcoral solid 1px; */
+  background-color: rgba(0, 0, 0, 0.293);
 }
 
+.editButton:active {
+  background-color: rgba(255, 255, 255, 0.293);
+}
+
+.titleBox {
+  border-radius: calc(var(--container-rounding) - var(--container-padding));
+
+  padding: 0.5em;
+
+  margin: 0em;
+  margin-bottom: 0.6em;
+}
+
+.titleBox.done {
+  background-color: var(--done-colour);
+}

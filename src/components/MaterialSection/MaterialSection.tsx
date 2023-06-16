@@ -23,6 +23,7 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
   const [materialSort, setMaterialSort] = usePersistentState<{ id: string }[]>("sort", []);
   const [sortState, setSortState] = useState<SortState>(defaultSortState);
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [hideCompletedMaterials, setHideCompletedMaterials] = useState(false);
   const requiredByMaterial = getMaterialsFromArmours(armours);
 
   // Add missing materials to our sort.
@@ -56,13 +57,15 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
         newSort.sort((a, b) => {
           const aFull = materials.find((mat) => mat.name === a.id);
           const bFull = materials.find((mat) => mat.name === b.id);
-          if (!aFull || !bFull) return 0;
+          if (!aFull && !bFull) return 0;
+          if (!aFull) return 1;
+          if (!bFull) return -1;
 
-          const aRequired = requiredByMaterial[aFull.name];
-          const bRequired = requiredByMaterial[bFull.name];
+          const aRequired = requiredByMaterial[aFull.name] ?? 0;
+          const bRequired = requiredByMaterial[bFull.name] ?? 0;
 
-          const aRemaining = aRequired - aFull.amountOwned;
-          const bRemaining = bRequired - bFull.amountOwned;
+          const aRemaining = Math.max(aRequired - aFull.amountOwned, 0);
+          const bRemaining = Math.max(bRequired - bFull.amountOwned, 0);
 
           if (aRemaining !== bRemaining) {
             return aRemaining - bRemaining;
@@ -87,62 +90,73 @@ function MaterialSection({ armours, materials, onMaterialUpdate }: MaterialSecti
   });
 
   return (
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          <th></th>
-          <MaterialHeader name="name" sortInfo={{ state: sortState, onSortChanged }} />
-          <MaterialHeader name="have" sortInfo={{ state: sortState, onSortChanged }} />
-          <MaterialHeader name="need" sortInfo={{ state: sortState, onSortChanged }} />
-          <MaterialHeader name="tags" />
-        </tr>
-      </thead>
-      <ReactSortable
-        tag="tbody"
-        animation={200}
-        list={materialSort}
-        setList={setMaterialSort}
-        handle={`.${styles.dragHandle}`}
-        onEnd={(event) => {
-          if (event.oldIndex !== event.newIndex) setSortState({ direction: "other", sortedBy: "custom" });
-        }}
-      >
-        {[...rowsWithActiveTags, ...rowsWithoutActiveTags].map((mat) => {
-          const material = materials.find((material) => material.name === mat.id);
-          if (!material) return null;
+    <>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th></th>
+            <MaterialHeader name="name" sortInfo={{ state: sortState, onSortChanged }} />
+            <MaterialHeader name="have" sortInfo={{ state: sortState, onSortChanged }} />
+            <MaterialHeader name="need" sortInfo={{ state: sortState, onSortChanged }} />
+            <MaterialHeader name="tags" />
+          </tr>
+        </thead>
+        <ReactSortable
+          tag="tbody"
+          animation={200}
+          list={materialSort}
+          setList={setMaterialSort}
+          handle={`.${styles.dragHandle}`}
+          onEnd={(event) => {
+            if (event.oldIndex !== event.newIndex) setSortState({ direction: "other", sortedBy: "custom" });
+          }}
+        >
+          {[...rowsWithActiveTags, ...rowsWithoutActiveTags].map((mat) => {
+            const material = materials.find((material) => material.name === mat.id);
+            if (!material) return null;
 
-          const relevantArmours = armours.filter(({ requirements }) =>
-            requirements.some((requirement) => requirement.name === mat.id)
-          );
+            const relevantArmours = armours.filter(({ requirements }) =>
+              requirements.some((requirement) => requirement.name === mat.id)
+            );
 
-          const displayState: DisplayState =
-            rowsWithActiveTags.length === 0 ? "regular" : rowsWithActiveTags.includes(mat) ? "highlight" : "lowlight";
+            const displayState: DisplayState =
+              rowsWithActiveTags.length === 0 ? "regular" : rowsWithActiveTags.includes(mat) ? "highlight" : "lowlight";
 
-          return (
-            <MaterialRow
-              key={material.name}
-              displayState={displayState}
-              dragHandleClass={styles.dragHandle}
-              material={material}
-              numPossessed={material.amountOwned}
-              numRequired={requiredByMaterial[material.name]}
-              visible={material.name in requiredByMaterial}
-              relevantArmours={relevantArmours}
-              activeTags={activeTags}
-              onAmountUpdate={(amount) => onMaterialUpdate(material.name, amount, material.tags)}
-              onTagsUpdated={(tags) => onMaterialUpdate(material.name, material.amountOwned, tags)}
-              onTagToggled={(tag, state) => {
-                if (state) {
-                  setActiveTags((prev) => [...prev, tag]);
-                } else {
-                  setActiveTags((prev) => prev.filter((t) => t !== tag));
+            return (
+              <MaterialRow
+                key={material.name}
+                displayState={displayState}
+                dragHandleClass={styles.dragHandle}
+                material={material}
+                numPossessed={material.amountOwned}
+                numRequired={requiredByMaterial[material.name]}
+                visible={
+                  material.name in requiredByMaterial &&
+                  !(hideCompletedMaterials && material.amountOwned >= requiredByMaterial[material.name])
                 }
-              }}
-            />
-          );
-        })}
-      </ReactSortable>
-    </table>
+                relevantArmours={relevantArmours}
+                activeTags={activeTags}
+                onAmountUpdate={(amount) => onMaterialUpdate(material.name, amount, material.tags)}
+                onTagsUpdated={(tags) => onMaterialUpdate(material.name, material.amountOwned, tags)}
+                onTagToggled={(tag, state) => {
+                  if (state) {
+                    setActiveTags((prev) => [...prev, tag]);
+                  } else {
+                    setActiveTags((prev) => prev.filter((t) => t !== tag));
+                  }
+                }}
+              />
+            );
+          })}
+        </ReactSortable>
+      </table>
+      <input
+        type="button"
+        value={hideCompletedMaterials ? "Show all" : "Hide completed"}
+        className={styles.toggleCompleted}
+        onClick={() => setHideCompletedMaterials((prev) => !prev)}
+      ></input>
+    </>
   );
 }
 

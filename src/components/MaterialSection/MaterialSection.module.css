@@ -11,3 +11,13 @@
   width: 1.3em;
   vertical-align: middle;
 }
+
+.toggleCompleted {
+  color: inherit;
+  margin: 1em;
+  background-color: transparent;
+  border: solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0.1em 0.2em 0.2em rgba(0, 0, 0, 0.5);
+  border-radius: 0.2em;
+  width: 9em;
+}

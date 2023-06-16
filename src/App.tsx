@@ -47,6 +47,7 @@ function App() {
       ) : null}
       <Collapsible>
         <ArmourSection
+          items={materialList}
           armours={armourList}
           onUpdateItem={async (type, item, oldItem) => {
             if (type === "delete") {

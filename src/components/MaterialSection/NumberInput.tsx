@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import styles from "./NumberInput.module.css";
+import cs from "cs";
 
 interface NumberInputProps {
   min?: number;
@@ -11,6 +12,7 @@ interface NumberInputProps {
 }
 
 function NumberInput({ min, max, step, value, className, onChange }: NumberInputProps) {
+  // Have to use a ref to hook up the '+' button
   const num = useRef(0);
 
   useEffect(() => {
@@ -18,7 +20,7 @@ function NumberInput({ min, max, step, value, className, onChange }: NumberInput
   }, [value]);
 
   return (
-    <span className={className}>
+    <span className={cs(className, styles.container)}>
       <input
         type="number"
         min={min}
@@ -32,6 +34,7 @@ function NumberInput({ min, max, step, value, className, onChange }: NumberInput
         className={styles.numInput}
       />
       <button
+        type="button"
         className={styles.button}
         onClick={() => {
           num.current++;

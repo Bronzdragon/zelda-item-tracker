@@ -1,8 +1,12 @@
+.container {
+  display: flex;
+}
+
 .button {
-  height: 100%;
-  width: 2em;
+  width: 1.5em;
 }
 
 .numInput {
   width: 2em;
+  text-align: center;
 }
