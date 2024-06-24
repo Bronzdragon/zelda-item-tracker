@@ -1,41 +1,14 @@
-# Getting Started with Create React App
+# The Legend of Zelda™: Breath of the Wild & Tears of the Kingdom unofficial item upgrade tracker.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project (built upon Create-React-App) allows users to easily track item goals in these two Legend of Zelda games. Primarily intended for keeping track of outstanding requirements to upgrade clothing items, the application is flexible enough to track any goal you have for which item collection is necessary.
 
-## Available Scripts
+Simply open the app (instructions below), set your goals, and then every time you collect a relevant item (or whenever you feel like updating the list), enter the collected item.
 
-In the project directory, you can run:
+## How to run:
+To run the application in development mode (good enough for most uses), you must first have [node.js and npm](https://nodejs.org) installed. Once you've done that, open a terminal pointed at the project's root folder, then:
+1. Install dependencies. `npm install`.
+2. Run the server. `npm start`.
+3. Open the site on your preferred device. (Note, progress does not sync between devices).
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Building:
+You can build this application into pure front-end files, which you can then use with any server. Simply run the build script (`npm run build`), and you'll find the files in a `build` folder. From there, host them however you'd like.
