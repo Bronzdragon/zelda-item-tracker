@@ -1,5 +1,7 @@
 body {
   background-color: #282c34;
+  background-size: 16px;
+  background-image: url("/public/web_bg.png");
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
     "Droid Sans", "Helvetica Neue", sans-serif;

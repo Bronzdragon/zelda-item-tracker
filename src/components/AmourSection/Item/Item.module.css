@@ -11,6 +11,7 @@
 
   padding: var(--container-padding);
   padding-bottom: 0.4em;
+  background-color: rgb(48, 53, 63);
 }
 
 .cell.done {
