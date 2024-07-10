@@ -3,7 +3,9 @@ This application helps you keep track of outstanding items to collect for the ar
 
 The application also features several organizational features, like filtering tags, or sorting by amount of items you still need to collect.
 
-The system is designed for BOTW/TOTK, but may work with either trivial modification or no modification for other games as well.
+The system is designed for BoTW/ToTK, but may work with either trivial modification or no modification for other games as well.
+
+https://github.com/Bronzdragon/zelda-item-tracker/assets/1936103/4012a305-ffd9-437d-bc1c-8083d92cf2fd
 
 ## How to run:
 To run the application in development mode (good enough for most uses), you must first have [node.js and npm](https://nodejs.org) installed. Once you've done that, open a terminal pointed at the project's root folder, then:
